@@ -9,6 +9,7 @@ name = "pypi"
 
 discord = "*"
 feedparser = "*"
+python-dateutil = "*"
 
 
 [dev-packages]
