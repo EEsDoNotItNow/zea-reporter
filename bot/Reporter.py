@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 
-import feedparser 
+from code.client_mgr import client
+from code.wiki_reader import Wiki_Reader
 
+import os
 
-d = feedparser.parse("http://192.243.108.252/w/api.php?hidebots=1&urlversion=1&days=7&limit=50&action=feedrecentchanges&feedformat=atom")
+reader = Wiki_Reader()
 
-for entry in d['entries']:
-    print()
-    for key in entry:
-        print(key)
-    print(entry['title'])
-    print(entry['updated'])
+client.run(os.environ['CLIENT_TOKEN'])
