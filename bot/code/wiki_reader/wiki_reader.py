@@ -11,15 +11,25 @@ from ..client_mgr import client
 class Wiki_Reader:
 
     def __init__(self):
-        client.loop.create_task(self.check_atom())
         self.last_check = datetime.datetime.utcnow()
+        client.loop.create_task(self.loop())
         pass
 
 
-    async def check_atom(self):
+    async def loop(self):
         await asyncio.sleep(5)
         new_last_check = datetime.datetime.utcnow()
-        # print("\nChecking RSS")
+
+        try:
+            await self.check_atom()
+        except:
+            pass
+
+        self.last_check = new_last_check
+        client.loop.create_task(self.loop())
+
+
+    async def check_atom(self):
         d = feedparser.parse("http://192.243.108.252/w/api.php?hidebots=1&urlversion=1&days=7&limit=50&action=feedrecentchanges&feedformat=atom")
         for entry in d['entries']:
         
@@ -68,6 +78,4 @@ class Wiki_Reader:
 
 
 
-        self.last_check = new_last_check
-        client.loop.create_task(self.check_atom())
         
