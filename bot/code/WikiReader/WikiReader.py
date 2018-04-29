@@ -18,14 +18,7 @@ class WikiReader:
 
         self.channels = ("439882864247570435","439985698133639168") 
         self.last_check = datetime.datetime.utcnow()
-        # client.loop.create_task(self.loop())
-
-        pass
-
-
-    async def on_message(self, message):
-        self.log.info
-        pass
+        # client.loop.create_task(self.loop())\
 
 
     async def on_ready(self):
