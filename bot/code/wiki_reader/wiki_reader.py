@@ -10,7 +10,7 @@ from ..client_mgr import client
 
 class Wiki_Reader:
 
-    channels = ("439985698133639168","439882864247570435") 
+    channels = ("439882864247570435","439985698133639168") 
 
     def __init__(self):
         self.last_check = datetime.datetime.utcnow()
@@ -54,7 +54,7 @@ class Wiki_Reader:
 
             date_of_entry = parse(entry['updated'], ignoretz=True)
 
-            if date_of_entry > self.last_check:
+            if date_of_entry > self.last_check or 1:
                 for key in entry:
                     print(f"{key}:{entry[key]}")
                                 
@@ -70,12 +70,11 @@ class Wiki_Reader:
 
                 summary = re.match("<p>(.{1,})</p>", entry['summary_detail']['value'])
                 if summary:
-                    print("Add a summery!")
-                    print(summary.groups(0)[0])
                     message.add_field(name="Summary", value=summary.groups(0)[0])
 
                 for channel in Wiki_Reader.channels:
                     channel = client.get_channel(channel)
+                    print(f"Send to {channel}")
                     await client.send_message(destination=channel, embed=message)
 
 
