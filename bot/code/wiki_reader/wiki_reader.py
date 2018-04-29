@@ -1,9 +1,10 @@
 
+from dateutil.parser import parse
 import asyncio
 import datetime
-import feedparser
-from dateutil.parser import parse
 import discord
+import feedparser
+import re
 
 from ..client_mgr import client
 
@@ -47,11 +48,19 @@ class Wiki_Reader:
                                 
                 color = discord.colour.Color(0).teal()
 
+
                 message = discord.Embed(title=entry['title'],
                     colour=color,
                     timestamp=date_of_entry,
                     url=entry['link'])
+
                 message.add_field(name="Author",value=entry['author'])
+
+                summary = re.match("<p>(.{1,})</p>", entry['summary_detail']['value'])
+                if summary:
+                    print("Add a summery!")
+                    print(summary.groups(0)[0])
+                    message.add_field(name="Summary", value=summary.groups(0)[0])
 
                 channel = client.get_channel("439882864247570435")
                 
