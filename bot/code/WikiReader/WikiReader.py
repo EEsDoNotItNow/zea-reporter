@@ -6,29 +6,49 @@ import discord
 import feedparser
 import re
 
-from ..client_mgr import client
+from ..Log import Log
+from ..Client import Client
 
-class Wiki_Reader:
+class WikiReader:
 
-    channels = ("439882864247570435","439985698133639168") 
+    def __init__(self, args):
+        self.log = Log()
+        self.client = Client()
+        self.args = args
 
-    def __init__(self):
+        self.channels = ("439882864247570435","439985698133639168") 
         self.last_check = datetime.datetime.utcnow()
-        client.loop.create_task(self.loop())
+        # client.loop.create_task(self.loop())
+
         pass
 
 
-    async def loop(self):
-        await asyncio.sleep(5)
-        new_last_check = datetime.datetime.utcnow()
+    async def on_message(self, message):
+        self.log.info
+        pass
 
-        try:
-            await self.check_atom()
-        except:
-            pass
 
-        self.last_check = new_last_check
-        client.loop.create_task(self.loop())
+    async def on_ready(self):
+        self.log.info("Creating atom checking loop")
+        self.client.loop.create_task(self.atom_loop())
+
+
+    async def atom_loop(self):
+        while 1:
+
+            await asyncio.sleep(5)
+            new_last_check = datetime.datetime.utcnow()
+
+            # Handle all errors here, we don't want to stop this ever. 
+            try:
+                await self.check_atom()
+            except KeyboardInterrupt:
+                self.log.exception("ctrl+c received, die!")
+                raise
+            except:
+                self.log.exception("ckeck_atom threw an error.")
+
+            self.last_check = new_last_check
 
 
     async def check_atom(self):
@@ -55,7 +75,7 @@ class Wiki_Reader:
             date_of_entry = parse(entry['updated'], ignoretz=True)
 
             if date_of_entry > self.last_check:
-                print("Saw page update, parse and send!")
+                self.log.info("Saw page update, parse and send!")
                 # for key in entry:
                 #     print(f"{key}:{entry[key]}")
                                 
@@ -73,14 +93,14 @@ class Wiki_Reader:
                 if summary:
                     message.add_field(name="Summary", value=summary.groups(0)[0])
 
-                for channel in Wiki_Reader.channels:
-                    channel = client.get_channel(channel)
-                    print(f"Send to {channel}")
+                for channel in self.channels:
+                    channel = self.client.get_channel(channel)
+                    self.log.info(f"Send to {channel}")
                     try:
-                        await client.send_message(destination=channel, embed=message)
+                        await self.client.send_message(destination=channel, embed=message)
+                    except KeyboardInterrupt:
+                        self.log.exception("ctrl+c received, die!")
+                        raise
                     except:
-                        print("Error was received, continue!")
+                        self.log.exception("Error was received, continue!")
 
-
-
-        

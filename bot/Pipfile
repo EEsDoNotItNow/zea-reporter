@@ -8,8 +8,6 @@ name = "pypi"
 [packages]
 
 discord = "*"
-feedparser = "*"
-python-dateutil = "*"
 
 
 [dev-packages]
