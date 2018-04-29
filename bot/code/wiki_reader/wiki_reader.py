@@ -54,9 +54,10 @@ class Wiki_Reader:
 
             date_of_entry = parse(entry['updated'], ignoretz=True)
 
-            if date_of_entry > self.last_check or 1:
-                for key in entry:
-                    print(f"{key}:{entry[key]}")
+            if date_of_entry > self.last_check:
+                print("Saw page update, parse and send!")
+                # for key in entry:
+                #     print(f"{key}:{entry[key]}")
                                 
                 color = discord.colour.Color(0).teal()
 
@@ -75,7 +76,10 @@ class Wiki_Reader:
                 for channel in Wiki_Reader.channels:
                     channel = client.get_channel(channel)
                     print(f"Send to {channel}")
-                    await client.send_message(destination=channel, embed=message)
+                    try:
+                        await client.send_message(destination=channel, embed=message)
+                    except:
+                        print("Error was received, continue!")
 
 
 
