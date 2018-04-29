@@ -3,6 +3,7 @@ import asyncio
 import datetime
 import feedparser
 from dateutil.parser import parse
+import discord
 
 from ..client_mgr import client
 
@@ -15,9 +16,9 @@ class Wiki_Reader:
 
 
     async def check_atom(self):
-        await asyncio.sleep(10)
+        await asyncio.sleep(5)
         new_last_check = datetime.datetime.utcnow()
-        print("\nChecking RSS")
+        # print("\nChecking RSS")
         d = feedparser.parse("http://192.243.108.252/w/api.php?hidebots=1&urlversion=1&days=7&limit=50&action=feedrecentchanges&feedformat=atom")
         for entry in d['entries']:
         
@@ -43,9 +44,19 @@ class Wiki_Reader:
             if date_of_entry > self.last_check:
                 for key in entry:
                     print(f"{key}:{entry[key]}")
-                message = f"{entry['title']} updated by {entry['author']} on {entry['updated']} at {entry['link']}"
-                general = client.get_channel("439882864247570435")
-                await client.send_message(general, message)
+                                
+                color = discord.colour.Color(0).teal()
+
+                message = discord.Embed(title=entry['title'],
+                    colour=color,
+                    timestamp=date_of_entry,
+                    url=entry['link'])
+                message.add_field(name="Author",value=entry['author'])
+
+                channel = client.get_channel("439882864247570435")
+                
+                await client.send_message(destination=channel, embed=message)
+
 
 
         self.last_check = new_last_check
