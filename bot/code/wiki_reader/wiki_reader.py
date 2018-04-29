@@ -10,6 +10,8 @@ from ..client_mgr import client
 
 class Wiki_Reader:
 
+    channels = ("439985698133639168","439882864247570435") 
+
     def __init__(self):
         self.last_check = datetime.datetime.utcnow()
         client.loop.create_task(self.loop())
@@ -72,9 +74,9 @@ class Wiki_Reader:
                     print(summary.groups(0)[0])
                     message.add_field(name="Summary", value=summary.groups(0)[0])
 
-                channel = client.get_channel("439882864247570435")
-                
-                await client.send_message(destination=channel, embed=message)
+                for channel in Wiki_Reader.channels:
+                    channel = client.get_channel(channel)
+                    await client.send_message(destination=channel, embed=message)
 
 
 
