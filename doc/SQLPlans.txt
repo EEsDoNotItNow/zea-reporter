@@ -1,0 +1,16 @@
+
+
+Users:
+
+Quotes:
+
+    CREATE TABLE IF NOT EXISTS quotes 
+    (
+        id INTEGER, 
+        user_id TEXT,
+        date_created INTEGER,
+        quote TEXT,
+        times_quoted INTEGER DEFAULT 0
+    )
+
+
