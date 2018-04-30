@@ -3,9 +3,9 @@
 import os
 import argparse
 
-from code.Client import Client
-from code.WikiReader import WikiReader
-from code.Log import Log
+from .code.Client import Client
+from .code.WikiReader import WikiReader
+from .code.Log import Log
 
 parser = argparse.ArgumentParser(description='Basic Bot Demo')
 parser.add_argument('--name',
