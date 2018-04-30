@@ -3,6 +3,8 @@
 import os
 import argparse
 
+from . import __version__
+
 from .code.Client import Client
 from .code.WikiReader import WikiReader
 from .code.Log import Log
@@ -19,6 +21,8 @@ args = parser.parse_args()
 log = Log(args)
 
 log.info(args)
+
+log.info(f"Booting under version {__version__}")
 
 # We break normal patterns here, and begin importing the rest of the bot after logging and parsing is done!
 
