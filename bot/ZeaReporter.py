@@ -3,8 +3,6 @@
 import os
 import argparse
 
-print(os.getcwd())
-
 from . import __version__
 
 from .code.Client import Client
