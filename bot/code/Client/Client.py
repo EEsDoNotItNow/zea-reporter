@@ -141,12 +141,6 @@ class Client(discord.Client):
     async def on_message(self, message):
 
         self.log.debug("on_message")
-        if "crash" in message.content and message.author != self.user:
-            await self.send_message(message.channel, "Okay boss, crashin!")
-            self.log.info("Calling logout")
-            await self.logout()
-            self.log.info("Calling close")
-            await self.close()
         for module in self.registry:
             try:
                 await module.on_message(message)
