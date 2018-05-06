@@ -5,17 +5,19 @@
     To keep our bot alive, we run a retry wrapper!
 """
 
+import shlex
 import subprocess
+import sys
 import time
 
 class EXPRetry:
 
     def __init__(self):
         self.retry_array = [
-                0.1,0.2,0.5,
-                  1,  2,  5,
-                 10, 20, 50, 
-                100,200,500]
+                            0.1, 0.2, 0.5,
+                              1,   2,   5,
+                             10,  20,  50, 
+                            100, 200, 500]
         self.retries = -1
         self.t0 = 0
         self.t1 = 0
@@ -49,14 +51,13 @@ class EXPRetry:
 RT = EXPRetry()
 while 1:
     RT.start()
-
+    cmd = "python -m bot " + " ".join(sys.argv[1:])
     try:
-        subprocess.run(["python","-m","bot"])
+        ret = subprocess.run(shlex.split(cmd))
     except KeyboardInterrupt:
         break
     except Exception as e:
         print(e)
-        pass
 
     RT.end()
     RT.sleep()

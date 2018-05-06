@@ -10,10 +10,17 @@ from .code.WikiReader import WikiReader
 from .code.Log import Log
 
 parser = argparse.ArgumentParser(description='Basic Bot Demo')
+
 parser.add_argument('--name',
                     default="Zea Reporter",
                     help='Name of this bot')
+
 parser.add_argument('--token',
+                    help='Token to use to login')
+
+parser.add_argument('--log-level',
+                    choices = ['INFO','DEBUG'],
+                    default='INFO',
                     help='Token to use to login')
 
 args = parser.parse_args()
