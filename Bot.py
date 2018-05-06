@@ -51,7 +51,7 @@ while 1:
     RT.start()
 
     try:
-        subprocess.run("./ZeaReporter.py")
+        subprocess.run(["python","-m","bot"])
     except KeyboardInterrupt:
         break
     except Exception as e:
