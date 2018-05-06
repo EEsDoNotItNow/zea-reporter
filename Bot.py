@@ -52,6 +52,7 @@ RT = EXPRetry()
 while 1:
     RT.start()
     cmd = "python -m bot " + " ".join(sys.argv[1:])
+    print(f"Running command: {cmd}")
     try:
         ret = subprocess.run(shlex.split(cmd))
     except KeyboardInterrupt:
