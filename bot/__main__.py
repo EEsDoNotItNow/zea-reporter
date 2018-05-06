@@ -1,1 +1,1 @@
-from . import ZeaReporter
+from . import Bot
