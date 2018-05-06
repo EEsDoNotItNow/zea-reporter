@@ -22,6 +22,12 @@ parser.add_argument('--env',
                     choices=['prod','dev'],
                     help='What is our environment?')
 
+parser.add_argument('--log-level',
+                    choices = ['INFO','DEBUG'],
+                    default='INFO',
+                    help='Token to use to login')
+
+
 args = parser.parse_args()
 
 log = Log(args)
@@ -32,7 +38,6 @@ log.info(f"Booting under version {__version__}")
 
 # We break normal patterns here, and begin importing the rest of the bot after logging and parsing is done!
 
-
 x = Client()
 
 #################################
@@ -40,7 +45,6 @@ x = Client()
 #################################
 
 x.register(WikiReader(args))
-
 
 if args.token:
     log.info("Using token from args")

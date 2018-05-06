@@ -1,4 +1,4 @@
 
 git pull
 source ~/.ssh/zea_credentials
-pipenv run python -m bot --env prod
+pipenv run python ./Bot.py --env prod "$@"

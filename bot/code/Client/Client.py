@@ -61,7 +61,7 @@ class Client(discord.Client):
 
     async def on_error(self, event, *args, **kwargs):
 
-        self.log.debug("on_error")
+        self.log.exception("Saw exception")
         for module in self.registry:
             try:
                 await module.on_error(event, *args, **kwargs)
