@@ -4,7 +4,7 @@ Users:
     CREATE TABLE IF NOT EXISTS users
     (
         name TEXT NOT NULL,
-        id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
         discriminator TEXT,
         avatar TEXT,
         bot BOOLEAN,
@@ -23,6 +23,7 @@ Quotes:
     (
         id TEXT, 
         user_id TEXT,
+        server_id TEXT,
         date_created INTEGER,
         quote TEXT,
         times_quoted INTEGER DEFAULT 0
