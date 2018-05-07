@@ -7,6 +7,7 @@ from . import __version__
 
 from .code.Client import Client
 from .code.WikiReader import WikiReader
+from .code.Stats import Stats
 from .code.Log import Log
 
 parser = argparse.ArgumentParser(description='Basic Bot Demo')
@@ -45,6 +46,7 @@ x = Client()
 #################################
 
 x.register(WikiReader(args))
+x.register(Stats(args))
 
 if args.token:
     log.info("Using token from args")
