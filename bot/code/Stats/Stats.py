@@ -72,7 +72,6 @@ class Stats:
 
 class User:
 
-
     def __init__(self, user):
         self.user = user
 
@@ -84,6 +83,9 @@ class User:
         """
 
         # Attempt to load file, or make a new one
+        # TODO: We could check to see if we are talking to a member, and if so, get user.server.id to call it up. 
+        # This would also mean we need to handle creation of folders, which means we should proabably detect
+        # where we are in the file system before blasting those out.
         user_file = Path(f"users/stats/{self.user.id}.json")
 
         if user_file.is_file():
