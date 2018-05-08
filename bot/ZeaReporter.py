@@ -28,16 +28,14 @@ parser.add_argument('--log-level',
                     default='INFO',
                     help='Token to use to login')
 
-
 args = parser.parse_args()
 
+
+# The one and only time we give Log() an argument!
 log = Log(args)
 
 log.info(args)
-
 log.info(f"Booting under version {__version__}")
-
-# We break normal patterns here, and begin importing the rest of the bot after logging and parsing is done!
 
 x = Client()
 
@@ -47,6 +45,10 @@ x = Client()
 
 x.register(WikiReader(args))
 x.register(Stats(args))
+
+#################################
+### Register all modules here ###
+#################################
 
 if args.token:
     log.info("Using token from args")
