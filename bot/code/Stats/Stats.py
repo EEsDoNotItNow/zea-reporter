@@ -24,9 +24,10 @@ class Stats:
 
 
     async def process_message(self, message):
-        words = len(message.content.split(' '))
-        letters = len(message.content.replace(" ",""))
-        numbers = len(re.findall("\d+", message.clean_content))
+        stats_dict = {}
+        stats_dict['words'] = len(message.content.split(' '))
+        stats_dict['letters'] = len(message.content.replace(" ",""))
+        stats_dict['numbers'] = len(re.findall("\d+", message.clean_content))
 
         # Track URLs and Pictures
         total_urls = 0
@@ -53,11 +54,42 @@ class Stats:
         if len(message.mentions):
             mentions += len(message.mentions)
         
-        self.log.info(f"Saw {words} words")
-        self.log.info(f"Saw {letters} letters")
-        self.log.info(f"Saw {numbers} numbers")
+        self.log.info(f"Saw {stats_dict['words']} words")
+        self.log.info(f"Saw {stats_dict['letters']} letters")
+        self.log.info(f"Saw {stats_dict['numbers']} numbers")
         self.log.info(f"Saw {mentions} mentions")
         self.log.info(f"Saw {total_urls} total_urls")
         self.log.info(f"Saw {total_pictures} total_pictures")
         self.log.info(f"Saw {total_pixels} total_pixels")
         self.log.info(f"Saw {total_bytes} total_bytes")
+
+        user = User(author.id)
+        user.update(stats_dict)
+
+
+class User:
+
+
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+
+    def update(self, stats_dict):
+        """Given a stats dictionary, update the values in the JSON
+
+        Note that this function is NOT ASYNC! This lets us guarentee that the read/write cycle is single threaded!
+        """
+
+        # Attempt to load file, or make a new one
+
+        # Load stats from file
+
+        # Update values as needed
+
+        # Write file back to disc
+        # TODO: How can we make this safer?
+        pass
+
+
+
+
