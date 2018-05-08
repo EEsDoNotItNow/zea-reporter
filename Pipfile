@@ -10,6 +10,7 @@ name = "pypi"
 discord = "*"
 python-dateutil = "*"
 feedparser = "*"
+atomicwrites = "*"
 
 
 [dev-packages]
