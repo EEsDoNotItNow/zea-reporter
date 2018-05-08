@@ -1,12 +1,15 @@
 
+from atomicwrites import atomic_write
 from dateutil.parser import parse
+from pathlib import Path
 import asyncio
 import datetime
 import discord
+import json
 import re
 
-from ..Log import Log
 from ..Client import Client
+from ..Log import Log
 
 class Stats:
 
@@ -70,8 +73,8 @@ class Stats:
 class User:
 
 
-    def __init__(self, user_id):
-        self.user_id = user_id
+    def __init__(self, user):
+        self.user = user
 
 
     def update(self, stats_dict):
@@ -81,14 +84,32 @@ class User:
         """
 
         # Attempt to load file, or make a new one
+        user_file = Path(f"users/stats/{self.user.id}.json")
 
-        # Load stats from file
+        if user_file.is_file():
+            # Load stats from file
+            with open(user_file,'r') as fp:
+                user_data = json.load(fp)
+        else:
+            user_data = {}
+            user_data['name'] = user.name
+            user_data['discriminator'] = user.discriminator
+            user_data['created_at'] = user.created_at
+            user_data['display_name'] = user.display_name
+            user_data['stats'] = {}
 
         # Update values as needed
+        for key in stats_dict:
+
+            if key in user_data['stats']:
+                user_data['stats'][key] += stats_dict[key]
+            else:
+                user_data['stats'][key] = stats_dict[key]
 
         # Write file back to disc
         # TODO: How can we make this safer?
-        pass
+        with atomic_write(user_file, overwrite=True) as fp:
+            json.dump(user_data,fp,indent=4)
 
 
 
