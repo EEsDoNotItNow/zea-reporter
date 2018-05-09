@@ -181,7 +181,7 @@ class Client(discord.Client):
 
     async def on_ready(self):
 
-        self.log.debug("on_ready")
+        self.log.info("Bot ready!")
         for module in self.registry:
             if hasattr(module,'on_ready'):
                 await module.on_ready()

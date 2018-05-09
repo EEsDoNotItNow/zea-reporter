@@ -94,10 +94,10 @@ class User:
                 user_data = json.load(fp)
         else:
             user_data = {}
-            user_data['name'] = user.name
-            user_data['discriminator'] = user.discriminator
-            user_data['created_at'] = user.created_at
-            user_data['display_name'] = user.display_name
+            user_data['name'] = self.user.name
+            user_data['discriminator'] = self.user.discriminator
+            user_data['created_at'] = str(self.user.created_at)
+            user_data['display_name'] = self.user.display_name
             user_data['stats'] = {}
 
         # Update values as needed
