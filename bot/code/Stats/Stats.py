@@ -22,11 +22,13 @@ class Stats:
         self.sql = SQL()
 
         # check to see if we have our table or not
-        cur = self.sql.cur
-        cmd = "SELECT name FROM sqlite_master WHERE type='table' AND name='user_stats'"
-        if not cur.execute(cmd).fetchone():
-            self.log.warning("Didn't find our table, create it!")
 
+
+    async def on_ready(self):
+        if not await self.sql.table_exists('stats'):
+            self.log.warning("Stats table not found, creating")
+            await self._create_stats_table()
+    
 
     async def on_message(self, message):
         self.log.info("Processing message")
@@ -75,6 +77,67 @@ class Stats:
         self.log.info(f"Saw {stats_dict['total_bytes']} total_bytes")
 
         # Get stats from the SQL db
-        # Update them
-        # commit them
+        cur = self.sql.cur
+        cmd = "SELECT * FROM stats WHERE user_id=:user_id AND server_id=:server_id"
+        user = cur.execute(cmd,{"server_id":message.server.id,"user_id":message.author.id}).fetchone()
+        if not user:
+            # Create out new user!
+            self.log.info(f"New user creation event: {message.author.name}")
+            cmd = "INSERT INTO stats (user_id, server_id) VALUES (:user_id, :server_id)"
+            cur.execute(cmd, {"server_id":message.server.id,"user_id":message.author.id})
+            await self.sql.commit()
+            cmd = "SELECT * FROM stats WHERE user_id=:user_id AND server_id=:server_id"
+            user = cur.execute(cmd,{"server_id":message.server.id,"user_id":message.author.id}).fetchone()
 
+        self.log.info(user)
+        # Update them
+        for key in stats_dict:
+            if key in user:
+                self.log.info(f"Update {key}!")
+                user[key] += stats_dict[key]
+        # commit them
+        #self.log.info(f"Keys: {user.keys()}")
+        #self.log.info(f"Values: {user.values()}")
+        cmd = """
+            UPDATE stats 
+            SET
+                messages = messages + 1,
+                words = :words,
+                letters = :letters,
+                numbers = :numbers,
+                mentions = :mentions,
+                mentioned = :mentioned,
+                urls = :urls,
+                pictures = :pictures,
+                pixels = :pixels,
+                bytes = :bytes
+            WHERE
+                user_id = :user_id AND server_id = :server_id
+                """
+        cur.execute(cmd,user)
+        await self.sql.commit()
+
+
+
+    async def _create_stats_table(self):
+        cmd = """    
+            CREATE TABLE IF NOT EXISTS stats
+            (
+                user_id TEXT,
+                server_id TEXT,
+                messages INTEGER DEFAULT 0,
+                words INTEGER DEFAULT 0,
+                letters INTEGER DEFAULT 0,
+                numbers INTEGER DEFAULT 0,
+                mentions INTEGER DEFAULT 0,
+                mentioned INTEGER DEFAULT 0,
+                urls INTEGER DEFAULT 0,
+                pictures INTEGER DEFAULT 0,
+                pixels INTEGER DEFAULT 0,
+                bytes INTEGER DEFAULT 0,
+                UNIQUE(user_id,server_id)
+            )"""
+
+        cur = self.sql.cur
+        cur.execute(cmd)
+        await self.sql.commit()
