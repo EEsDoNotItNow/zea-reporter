@@ -66,7 +66,7 @@ class Stats:
         self.log.info(f"Saw {total_pixels} total_pixels")
         self.log.info(f"Saw {total_bytes} total_bytes")
 
-        user = User(author.id)
+        user = User(message.author)
         user.update(stats_dict)
 
 
