@@ -10,6 +10,7 @@ import re
 
 from ..Client import Client
 from ..Log import Log
+from ..SQL import SQL
 
 class Stats:
 
@@ -18,6 +19,7 @@ class Stats:
         self.log = Log()
         self.client = Client()
         self.args = args
+        sql1 = SQL(1)
 
 
     async def on_message(self, message):
@@ -33,17 +35,17 @@ class Stats:
         stats_dict['numbers'] = len(re.findall("\d+", message.clean_content))
 
         # Track URLs and Pictures
-        total_urls = 0
-        total_pictures = 0
-        total_pixels = 0
-        total_bytes = 0
+        stats_dict['total_urls'] = 0
+        stats_dict['total_pictures'] = 0
+        stats_dict['total_pixels'] = 0
+        stats_dict['total_bytes'] = 0
 
         for embed in message.embeds:
             if 'url' in embed:
-                total_urls += 1
+                stats_dict['total_urls'] += 1
                 if 'thumbnail' in embed:
-                    total_pictures += 1
-                    total_pixels += embed['thumbnail']['width'] * embed['thumbnail']['height']
+                    stats_dict['total_pictures'] += 1
+                    stats_dict['total_pixels'] += embed['thumbnail']['width'] * embed['thumbnail']['height']
 
         for attachment in message.attachments:
             if 'width' in attachment and 'height' in attachment:
@@ -60,11 +62,11 @@ class Stats:
         self.log.info(f"Saw {stats_dict['words']} words")
         self.log.info(f"Saw {stats_dict['letters']} letters")
         self.log.info(f"Saw {stats_dict['numbers']} numbers")
-        self.log.info(f"Saw {mentions} mentions")
-        self.log.info(f"Saw {total_urls} total_urls")
-        self.log.info(f"Saw {total_pictures} total_pictures")
-        self.log.info(f"Saw {total_pixels} total_pixels")
-        self.log.info(f"Saw {total_bytes} total_bytes")
+        self.log.info(f"Saw {stats_dict['mentions']} mentions")
+        self.log.info(f"Saw {stats_dict['total_urls']} total_urls")
+        self.log.info(f"Saw {stats_dict['total_pictures']} total_pictures")
+        self.log.info(f"Saw {stats_dict['total_pixels']} total_pixels")
+        self.log.info(f"Saw {stats_dict['total_bytes']} total_bytes")
 
         user = User(message.author)
         user.update(stats_dict)
