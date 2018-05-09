@@ -102,3 +102,6 @@ ENV/
 
 # Grab what ever is new!!
 Pipfile.lock
+
+# Never sync our DB
+data.db
