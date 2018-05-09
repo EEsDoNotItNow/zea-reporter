@@ -28,7 +28,6 @@ class Stats:
             self.log.warning("Didn't find our table, create it!")
 
 
-
     async def on_message(self, message):
         self.log.info("Processing message")
         await self.process_message(message)
@@ -62,9 +61,9 @@ class Stats:
             if 'size' in attachment:
                 total_bytes += attachment['size']
         
-        mentions = 0
+        stats_dict['mentions'] = 0
         if len(message.mentions):
-            mentions += len(message.mentions)
+            stats_dict['mentions'] += len(message.mentions)
         
         self.log.info(f"Saw {stats_dict['words']} words")
         self.log.info(f"Saw {stats_dict['letters']} letters")

@@ -38,10 +38,12 @@ log = Log(args)
 log.info(args)
 log.info(f"Booting under version {__version__}")
 
-log.info("Starting SQL")
-s = SQL("data.db")
 
 x = Client()
+
+# Note that this MUST register first!
+log.info("Starting SQL")
+x.register(SQL("data.db"))
 
 #################################
 ### Register all modules here ###
