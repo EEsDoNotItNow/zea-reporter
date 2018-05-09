@@ -29,4 +29,28 @@ Quotes:
         times_quoted INTEGER DEFAULT 0
     )
 
+Stats:
+
+    CREATE TABLE IF NOT EXISTS stats
+    (
+        user_id TEXT,
+        server_id TEXT,
+        words INTEGER DEFAULT 0,
+        letters INTEGER DEFAULT 0,
+        numbers INTEGER DEFAULT 0,
+        mentions INTEGER DEFAULT 0,
+        urls INTEGER DEFAULT 0,
+        pictures INTEGER DEFAULT 0,
+        pixels INTEGER DEFAULT 0,
+        bytes INTEGER DEFAULT 0
+    )
+
+        self.log.info(f"Saw {stats_dict['words']} words")
+        self.log.info(f"Saw {stats_dict['letters']} letters")
+        self.log.info(f"Saw {stats_dict['numbers']} numbers")
+        self.log.info(f"Saw {stats_dict['mentions']} mentions")
+        self.log.info(f"Saw {stats_dict['total_urls']} total_urls")
+        self.log.info(f"Saw {stats_dict['total_pictures']} total_pictures")
+        self.log.info(f"Saw {stats_dict['total_pixels']} total_pixels")
+        self.log.info(f"Saw {stats_dict['total_bytes']} total_bytes")
 
