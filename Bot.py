@@ -10,14 +10,15 @@ import subprocess
 import sys
 import time
 
+
 class EXPRetry:
 
     def __init__(self):
         self.retry_array = [
                             0.1, 0.2, 0.5,
                               1,   2,   5,
-                             10,  20,  50, 
-                            100, 200, 500]
+                             10,  20,  50,
+                            100, 200, 500]  # noqa: E131
         self.retries = -1
         self.t0 = 0
         self.t1 = 0
@@ -48,6 +49,7 @@ class EXPRetry:
 
         time.sleep(t_sleep)
 
+
 RT = EXPRetry()
 while 1:
     RT.start()
@@ -62,6 +64,3 @@ while 1:
 
     RT.end()
     RT.sleep()
-
-
-
