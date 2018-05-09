@@ -19,7 +19,14 @@ class Stats:
         self.log = Log()
         self.client = Client()
         self.args = args
-        sql1 = SQL(1)
+        self.sql = SQL()
+
+        # check to see if we have our table or not
+        cur = self.sql.cur
+        cmd = "SELECT name FROM sqlite_master WHERE type='table' AND name='user_stats'"
+        if not cur.execute(cmd).fetchone():
+            self.log.warning("Didn't find our table, create it!")
+
 
 
     async def on_message(self, message):
@@ -70,6 +77,10 @@ class Stats:
 
         user = User(message.author)
         user.update(stats_dict)
+
+        # Get stats from the SQL db
+        # Update them
+        # commit them
 
 
 class User:
