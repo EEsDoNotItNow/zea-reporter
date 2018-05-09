@@ -33,6 +33,16 @@ class Stats:
     async def on_message(self, message):
         self.log.info("Processing message")
         await self.process_message(message)
+
+        # Did this mention us? Maybe it's a command!      
+        self.log.info(f"Regexing content of: {message.content}")
+        match_obj = re.match("<@!?(?P<id>\d+)>", message.content)
+        if match_obj and match_obj.group('id')==self.client.user.id:
+            command = re.sub("^<@!?\d+> *", "", message.content)
+            self.log.info(f"Saw a command request: {command}")
+            if command.startswith("stats"):
+                await self.command_stats(message,command)
+            
         self.log.info("Message processed")
 
 
@@ -43,25 +53,25 @@ class Stats:
         stats_dict['numbers'] = len(re.findall("\d+", message.clean_content))
 
         # Track URLs and Pictures
-        stats_dict['total_urls'] = 0
-        stats_dict['total_pictures'] = 0
-        stats_dict['total_pixels'] = 0
-        stats_dict['total_bytes'] = 0
+        stats_dict['urls'] = 0
+        stats_dict['pictures'] = 0
+        stats_dict['pixels'] = 0
+        stats_dict['bytes'] = 0
 
         for embed in message.embeds:
             if 'url' in embed:
-                stats_dict['total_urls'] += 1
+                stats_dict['urls'] += 1
                 if 'thumbnail' in embed:
-                    stats_dict['total_pictures'] += 1
-                    stats_dict['total_pixels'] += embed['thumbnail']['width'] * embed['thumbnail']['height']
+                    stats_dict['pictures'] += 1
+                    stats_dict['pixels'] += embed['thumbnail']['width'] * embed['thumbnail']['height']
 
         for attachment in message.attachments:
             if 'width' in attachment and 'height' in attachment:
-                total_pictures += 1
-                total_pixels += attachment['width'] * attachment['height']
+                stats_dict['pictures'] += 1
+                stats_dict['pixels'] += attachment['width'] * attachment['height']
 
             if 'size' in attachment:
-                total_bytes += attachment['size']
+                stats_dict['bytes'] += attachment['size']
         
         stats_dict['mentions'] = 0
         if len(message.mentions):
@@ -71,10 +81,10 @@ class Stats:
         self.log.info(f"Saw {stats_dict['letters']} letters")
         self.log.info(f"Saw {stats_dict['numbers']} numbers")
         self.log.info(f"Saw {stats_dict['mentions']} mentions")
-        self.log.info(f"Saw {stats_dict['total_urls']} total_urls")
-        self.log.info(f"Saw {stats_dict['total_pictures']} total_pictures")
-        self.log.info(f"Saw {stats_dict['total_pixels']} total_pixels")
-        self.log.info(f"Saw {stats_dict['total_bytes']} total_bytes")
+        self.log.info(f"Saw {stats_dict['urls']} urls")
+        self.log.info(f"Saw {stats_dict['pictures']} pictures")
+        self.log.info(f"Saw {stats_dict['pixels']} pixels")
+        self.log.info(f"Saw {stats_dict['bytes']} bytes")
 
         # Get stats from the SQL db
         cur = self.sql.cur
@@ -118,7 +128,6 @@ class Stats:
         await self.sql.commit()
 
 
-
     async def _create_stats_table(self):
         cmd = """    
             CREATE TABLE IF NOT EXISTS stats
@@ -141,3 +150,45 @@ class Stats:
         cur = self.sql.cur
         cur.execute(cmd)
         await self.sql.commit()
+
+
+    async def command_stats(self, message, command):
+        self.log.info("Process the stats command")
+
+        match_list = re.findall("<@!?(\d+)>", message.content)
+        self.log.info(match_list)
+
+        if len(match_list) == 1:
+            # If we didn't get a list, give the authors stats back
+            match_list.append(message.author.id)
+
+        # Process the list
+        for _id in match_list[1:]:
+            self.log.info(f"Find stats for {_id}")
+            cur = self.sql.cur
+            cmd = "SELECT * FROM stats WHERE user_id=:user_id AND server_id=:server_id"
+            user = cur.execute(cmd,{"server_id":message.server.id,"user_id":_id}).fetchone()
+
+            if user is None:
+                self.log.warning("We cannot pull stats from a user that doesn't exist!")
+                continue
+
+            self.log.info(user)
+
+            user_obj = await self.client.get_user_info(_id)
+
+            embed = discord.Embed(title=user_obj.name, description="User Stats")
+
+            embed.add_field(name="Messages", value=user['messages'], inline=True)
+            embed.add_field(name="Words", value=user['words'], inline=True)
+            embed.add_field(name="Letters", value=user['letters'], inline=True)
+            embed.add_field(name="Numbers", value=user['numbers'], inline=True)
+            embed.add_field(name="mentions", value=user['mentions'], inline=True)
+            # embed.add_field(name="mentioned", value=user['mentioned'], inline=True)
+            embed.add_field(name="urls", value=user['urls'], inline=True)
+            embed.add_field(name="pictures", value=user['pictures'], inline=True)
+            embed.add_field(name="pixels", value=user['pixels'], inline=True)
+            embed.add_field(name="bytes", value=user['bytes'], inline=True)
+
+            await self.client.send_message(message.channel, embed=embed)
+
