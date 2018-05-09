@@ -8,6 +8,7 @@ from . import __version__
 from .code.Client import Client
 from .code.WikiReader import WikiReader
 from .code.Stats import Stats
+from .code.SQL import SQL
 from .code.Log import Log
 
 parser = argparse.ArgumentParser(description='Basic Bot Demo')
@@ -36,6 +37,9 @@ log = Log(args)
 
 log.info(args)
 log.info(f"Booting under version {__version__}")
+
+log.info("Starting SQL")
+s = SQL("data.db")
 
 x = Client()
 

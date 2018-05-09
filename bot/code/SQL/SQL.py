@@ -1,13 +1,17 @@
 
 import asyncio
+import sqlite3
 
 from ..Singleton import Singleton
 from ..Log import Log
 
 class SQL(metaclass=Singleton):
 
+
     def __init__(self, db_name):
-        self.db_name = db_name
+        self.conn = sqlite3.connect(db_name)
+        self.conn.row_factory = self.dict_factory
+        self.cur = self.conn.cursor()
         self.log = Log()
         self._commit_in_progress = False
 
@@ -28,3 +32,9 @@ class SQL(metaclass=Singleton):
         self._commit_in_progress = False
 
 
+    @staticmethod
+    def dict_factory(cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d

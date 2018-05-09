@@ -17,8 +17,8 @@ class EXPRetry:
         self.retry_array = [
                             0.1, 0.2, 0.5,
                               1,   2,   5,
-                             10,  20,  50,
-                            100, 200, 500]  # noqa: E131
+                             10,  20,  50,  # noqa: E241
+                            100, 200, 500]  # noqa: E131,E241
         self.retries = -1
         self.t0 = 0
         self.t1 = 0
