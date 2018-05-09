@@ -1,0 +1,32 @@
+
+
+Users:
+    CREATE TABLE IF NOT EXISTS users
+    (
+        name TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        discriminator TEXT,
+        avatar TEXT,
+        bot BOOLEAN,
+        avatar_url TEXT,
+        default_avatar TEXT,
+        default_avatar_url TEXT,
+        mention TEXT,
+        created_at INTEGER
+    )
+
+
+
+Quotes:
+
+    CREATE TABLE IF NOT EXISTS quotes 
+    (
+        id TEXT, 
+        user_id TEXT,
+        server_id TEXT,
+        date_created INTEGER,
+        quote TEXT,
+        times_quoted INTEGER DEFAULT 0
+    )
+
+
