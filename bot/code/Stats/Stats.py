@@ -75,57 +75,7 @@ class Stats:
         self.log.info(f"Saw {stats_dict['total_pixels']} total_pixels")
         self.log.info(f"Saw {stats_dict['total_bytes']} total_bytes")
 
-        user = User(message.author)
-        user.update(stats_dict)
-
         # Get stats from the SQL db
         # Update them
         # commit them
-
-
-class User:
-
-    def __init__(self, user):
-        self.user = user
-
-
-    def update(self, stats_dict):
-        """Given a stats dictionary, update the values in the JSON
-
-        Note that this function is NOT ASYNC! This lets us guarentee that the read/write cycle is single threaded!
-        """
-
-        # Attempt to load file, or make a new one
-        # TODO: We could check to see if we are talking to a member, and if so, get user.server.id to call it up. 
-        # This would also mean we need to handle creation of folders, which means we should proabably detect
-        # where we are in the file system before blasting those out.
-        user_file = Path(f"users/stats/{self.user.id}.json")
-
-        if user_file.is_file():
-            # Load stats from file
-            with open(user_file,'r') as fp:
-                user_data = json.load(fp)
-        else:
-            user_data = {}
-            user_data['name'] = self.user.name
-            user_data['discriminator'] = self.user.discriminator
-            user_data['created_at'] = str(self.user.created_at)
-            user_data['display_name'] = self.user.display_name
-            user_data['stats'] = {}
-
-        # Update values as needed
-        for key in stats_dict:
-
-            if key in user_data['stats']:
-                user_data['stats'][key] += stats_dict[key]
-            else:
-                user_data['stats'][key] = stats_dict[key]
-
-        # Write file back to disc
-        # TODO: How can we make this safer?
-        with atomic_write(user_file, overwrite=True) as fp:
-            json.dump(user_data,fp,indent=4)
-
-
-
 
